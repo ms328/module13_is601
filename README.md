@@ -1,264 +1,208 @@
-# 📦 Project Setup
+Module 13 – JWT Authentication, Client-Side Validation & Playwright E2E
 
----
+This project implements JWT-based user registration and login, a minimal front-end for authentication, Playwright end-to-end tests, and a Docker-based CI/CD pipeline with GitHub Actions.
 
-# 🧩 1. Install Homebrew (Mac Only)
+This module builds on earlier assignments by introducing a full authentication workflow (register → login → token verification) and validating it through automated tests.
 
-> Skip this step if you're on Windows.
+🚀 Features
+🔐 JWT Authentication (FastAPI)
 
-Homebrew is a package manager for macOS.  
-You’ll use it to easily install Git, Python, Docker, etc.
+/auth/register – Creates a new user
 
-**Install Homebrew:**
+/auth/login – Validates credentials and returns a JWT
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
+Passwords hashed with bcrypt
 
-**Verify Homebrew:**
+Pydantic validation for secure data handling
 
-```bash
-brew --version
-```
+🌐 Front-End (HTML/CSS/JS)
 
-If you see a version number, you're good to go.
+register.html & login.html
 
----
+Client-side validation:
 
-# 🧩 2. Install and Configure Git
+Email format
 
-## Install Git
+Minimum password length
 
-- **MacOS (using Homebrew)**
+Password confirmation
 
-```bash
-brew install git
-```
+Successful login → token stored in localStorage
 
-- **Windows**
+🤖 Playwright E2E Tests
 
-Download and install [Git for Windows](https://git-scm.com/download/win).  
-Accept the default options during installation.
+Covers:
 
-**Verify Git:**
+Successful registration
 
-```bash
-git --version
-```
+Successful login
 
----
+Error handling for:
 
-## Configure Git Globals
+invalid email
 
-Set your name and email so Git tracks your commits properly:
+short password
 
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "your_email@example.com"
-```
+mismatched passwords
 
-Confirm the settings:
+incorrect login credentials
 
-```bash
-git config --list
-```
+🛠️ CI/CD Pipeline (GitHub Actions)
 
----
+Spins up PostgreSQL
 
-## Generate SSH Keys and Connect to GitHub
+Installs dependencies + browsers
 
-> Only do this once per machine.
+Runs:
 
-1. Generate a new SSH key:
+Unit tests
 
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
+Integration tests
 
-(Press Enter at all prompts.)
+E2E tests
 
-2. Start the SSH agent:
+If ALL tests pass → pushes Docker image to Docker Hub
 
-```bash
-eval "$(ssh-agent -s)"
-```
+🐳 Docker Containerization
 
-3. Add the SSH private key to the agent:
+FastAPI app runs fully in Docker
 
-```bash
-ssh-add ~/.ssh/id_ed25519
-```
+PostgreSQL + pgAdmin4 supported
 
-4. Copy your SSH public key:
+Ready for local or cloud deployment
 
-- **Mac/Linux:**
+📁 Project Structure
+module13_is601/
+│
+├── app/
+│   ├── auth/             # JWT logic, dependencies
+│   ├── models/           # SQLAlchemy models
+│   ├── schemas/          # Pydantic schemas
+│   ├── main.py           # FastAPI entry point
+│   ├── database.py       # DB connection
+│   └── database_init.py  # Initial DB setup
+│
+├── static/
+│   ├── login.html        # Front-end page
+│   └── register.html     # Front-end page
+│
+├── tests/
+│   ├── e2e/              # Playwright E2E tests
+│   ├── unit/             # Unit tests
+│   └── integration/      # Integration tests
+│
+├── .github/workflows/
+│   └── test.yml          # CI/CD workflow
+│
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
 
-```bash
-cat ~/.ssh/id_ed25519.pub | pbcopy
-```
-
-- **Windows (Git Bash):**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | clip
-```
-
-5. Add the key to your GitHub account:
-   - Go to [GitHub SSH Settings](https://github.com/settings/keys)
-   - Click **New SSH Key**, paste the key, save.
-
-6. Test the connection:
-
-```bash
-ssh -T git@github.com
-```
-
-You should see a success message.
-
----
-
-# 🧩 3. Clone the Repository
-
-Now you can safely clone the course project:
-
-```bash
-git clone <repository-url>
-cd <repository-directory>
-```
-
----
-
-# 🛠️ 4. Install Python 3.10+
-
-## Install Python
-
-- **MacOS (Homebrew)**
-
-```bash
-brew install python
-```
-
-- **Windows**
-
-Download and install [Python for Windows](https://www.python.org/downloads/).  
-✅ Make sure you **check the box** `Add Python to PATH` during setup.
-
-**Verify Python:**
-
-```bash
-python3 --version
-```
-or
-```bash
-python --version
-```
-
----
-
-## Create and Activate a Virtual Environment
-
-(Optional but recommended)
-
-```bash
+🛠️ Local Setup (Without Docker)
+1️⃣ Create Virtual Environment
 python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate.bat  # Windows
-```
+source venv/bin/activate
 
-### Install Required Packages
-
-```bash
+2️⃣ Install Requirements
+pip install --upgrade pip
 pip install -r requirements.txt
-```
 
----
+3️⃣ Start FastAPI
+uvicorn app.main:app --reload
 
-# 🐳 5. (Optional) Docker Setup
 
-> Skip if Docker isn't used in this module.
+API will be available at:
 
-## Install Docker
+👉 http://127.0.0.1:8000
 
-- [Install Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
-- [Install Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
+👉 http://127.0.0.1:8000/docs
 
-## Build Docker Image
+🐳 Running With Docker
+Build + Start
+docker compose up --build
 
-```bash
-docker build -t <image-name> .
-```
 
-## Run Docker Container
+Services:
 
-```bash
-docker run -it --rm <image-name>
-```
+FastAPI → http://localhost:8000
 
----
+PostgreSQL → localhost:5432
 
-# 🚀 6. Running the Project
+pgAdmin → http://localhost:5050
 
-- **Without Docker**:
+🌐 Using the Front-End
 
-```bash
-python main.py
-```
+Open directly in your browser:
 
-(or update this if the main script is different.)
+static/login.html
+static/register.html
 
-- **With Docker**:
 
-```bash
-docker run -it --rm <image-name>
-```
+OR serve with a simple file server:
 
----
+python -m http.server 8001
 
-# 📝 7. Submission Instructions
+🤖 Running E2E Tests Locally
+Install Playwright Browsers
+playwright install
+Run E2E Test
+pytest tests/e2e/ -s -v
 
-After finishing your work:
 
-```bash
-git add .
-git commit -m "Complete Module X"
-git push origin main
-```
+🔄 CI/CD — GitHub Actions
 
-Then submit the GitHub repository link as instructed.
+Workflow file: .github/workflows/test.yml
 
----
+Pipeline steps:
 
-# 🔥 Useful Commands Cheat Sheet
+Start PostgreSQL
 
-| Action                         | Command                                          |
-| ------------------------------- | ------------------------------------------------ |
-| Install Homebrew (Mac)          | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
-| Install Git                     | `brew install git` or Git for Windows installer |
-| Configure Git Global Username  | `git config --global user.name "Your Name"`      |
-| Configure Git Global Email     | `git config --global user.email "you@example.com"` |
-| Clone Repository                | `git clone <repo-url>`                          |
-| Create Virtual Environment     | `python3 -m venv venv`                           |
-| Activate Virtual Environment   | `source venv/bin/activate` / `venv\Scripts\activate.bat` |
-| Install Python Packages        | `pip install -r requirements.txt`               |
-| Build Docker Image              | `docker build -t <image-name> .`                |
-| Run Docker Container            | `docker run -it --rm <image-name>`               |
-| Push Code to GitHub             | `git add . && git commit -m "message" && git push` |
+Install dependencies
 
----
+Run unit tests
 
-# 📋 Notes
+Run integration tests
 
-- Install **Homebrew** first on Mac.
-- Install and configure **Git** and **SSH** before cloning.
-- Use **Python 3.10+** and **virtual environments** for Python projects.
-- **Docker** is optional depending on the project.
+Run Playwright E2E tests
 
----
+Build Docker image
 
-# 📎 Quick Links
+Push to Docker Hub (on main branch)
 
-- [Homebrew](https://brew.sh/)
-- [Git Downloads](https://git-scm.com/downloads)
-- [Python Downloads](https://www.python.org/downloads/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [GitHub SSH Setup Guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+🐳 Docker Hub Repo
+
+Image pushes to:
+
+msaju20/module13_is601:latest
+msaju20/module13_is601:<commit_sha>
+
+
+
+📝 Reflection Summary (Module Requirement)
+
+This module strengthened skills in:
+
+JWT authentication
+
+Secure password hashing
+
+Front-end validation
+
+Playwright E2E automation
+
+Debugging API + front-end flows
+
+CI/CD pipelines
+
+Docker-based application infrastructure
+
+👩‍🏫 Instructor Expectations Checklist
+
+✔ GitHub repo link
+✔ Working JWT register/login
+✔ Front-end pages with validation
+✔ Passing Playwright tests screenshot
+✔ Screenshot of CI/CD workflow passing
+✔ Screenshot of Docker Hub push
+✔ Reflection document
